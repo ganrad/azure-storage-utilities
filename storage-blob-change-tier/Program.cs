@@ -83,6 +83,7 @@ namespace ChangeBlobTiers
 	        Console.WriteLine("Enumerating blobs ...");
 	        await foreach (BlobItem blobItem in contClient.GetBlobsAsync(BlobTraits.Metadata))
 	        {
+		    Console.WriteLine("-------------------------");
 		    Console.WriteLine("\tName: " + blobItem.Name);
 		    blobClient = contClient.GetBlobClient(blobItem.Name);
 		    Console.WriteLine("\tUri: " + blobClient.Uri);
@@ -115,7 +116,6 @@ namespace ChangeBlobTiers
 
 		       Console.WriteLine("-------------------------");
 		       Console.WriteLine($"No. of Blobs moved to {TargetTier} tier: {totalProcessed}");
-		       Console.WriteLine("-------------------------");
 		    };
 	        }
 
@@ -124,10 +124,6 @@ namespace ChangeBlobTiers
 		   BlobBatchClient batch = blobSvcClient.GetBlobBatchClient();
 		   taskList.Add(batch.SetBlobsAccessTierAsync(blobUrls, TargetTier));
 		   totalProcessed += batchCount;
-
-		   Console.WriteLine("-------------------------");
-		   Console.WriteLine($"No. of Blobs moved to {TargetTier} tier: {totalProcessed}");
-		   Console.WriteLine("-------------------------");
 		};
 
 		if ( taskList.Count > 0 )
