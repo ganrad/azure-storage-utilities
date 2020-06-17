@@ -39,6 +39,8 @@ namespace ChangeBlobTiers
     class Program
     {
 	static int BatchSize = 50; // Set the Batch Size, 256 is max.
+	static int ConcurrentTasks = 100; // Configure how many concurrent batch tasks to spawn
+
 	// Access tiers can be => Hot, Cool, Archive
 	static AccessTier SourceTier = AccessTier.Hot;  // Set the Source Access Tier
 	static AccessTier TargetTier = AccessTier.Cool; // Set the Target Access Tier
@@ -116,6 +118,14 @@ namespace ChangeBlobTiers
 
 		       Console.WriteLine("-------------------------");
 		       Console.WriteLine($"No. of Blobs moved to {TargetTier} tier: {totalProcessed}");
+
+		       if ( taskList.Count >= ConcurrentTasks )
+		       {
+			  // Wait for existing tasks to finish before proceeeding.
+			  // This is to avoid out of resources issue.
+		     	  Task.WaitAll(taskList.ToArray());
+			  taskList.Clear();
+		       }
 		    };
 	        }
 
